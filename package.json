@@ -1,6 +1,6 @@
 {
   "name": "@vadzim/readstream",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "read all stream to a promise",
   "keywords": [],
   "repository": "https://github.com/vadzim/readstream",
