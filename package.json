@@ -1,14 +1,14 @@
 {
-  "name": "@vadzim/name",
+  "name": "@vadzim/readstream",
   "version": "0.0.1",
-  "description": "description",
+  "description": "read all stream to a promise",
   "keywords": [],
-  "repository": "https://github.com/vadzim/repository",
+  "repository": "https://github.com/vadzim/readstream",
   "bugs": {
-    "url": "https://github.com/vadzim/repository/issues"
+    "url": "https://github.com/vadzim/readstream/issues"
   },
   "contributors": [],
-  "main": "distr/module.js",
+  "main": "distr/readstream.js",
   "author": "Vadzim Zieńka <developer@vadzim.info>",
   "scripts": {
     "build": "rm distr/*; babel source --out-dir distr && cd distr && (for f in $(find | grep -E '.js$'); do if grep @flow ../source/$f >/dev/null; then cp ../source/$f $f.flow; fi; done) && cd ..",
