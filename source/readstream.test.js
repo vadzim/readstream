@@ -1,42 +1,40 @@
 import readstream from "./readstream"
 import { Readable } from "stream"
 
-test("buffers only", async () => {
-	const s = new Readable({ objectMode: true })
-	const d = readstream(s)
-	s.push(new Buffer("123"))
-	s.push(new Buffer("456"))
-	s.push(new Buffer("789"))
-	s.push(null)
-	expect(await d).toEqual(new Buffer("123456789"))
+const readable = (options, array) =>
+	new Readable({
+		...options,
+		read() {
+			setTimeout(() => this.push(array.shift() || null), 10)
+		},
+	})
+
+test("buffers", async () => {
+	expect(await readstream(readable({}, [new Buffer("123"), new Buffer("456"), "789"]))) //
+		.toEqual(new Buffer("123456789"))
 })
 
-test("buffers + strings", async () => {
-	const s = new Readable({ objectMode: true })
-	const d = readstream(s)
-	s.push("123")
-	s.push("456")
-	s.push(new Buffer("789"))
-	s.push(null)
-	expect(await d).toEqual(new Buffer("123456789"))
+test("empty buffer", async () => {
+	expect(await readstream(readable({}, []))) //
+		.toEqual(new Buffer(""))
 })
 
-test("strings only", async () => {
-	const s = new Readable({ objectMode: true })
-	const d = readstream(s)
-	s.push("123")
-	s.push("456")
-	s.push("789")
-	s.push(null)
-	expect(await d).toEqual("123456789")
+test("strings", async () => {
+	expect(await readstream(readable({ encoding: "utf8" }, [new Buffer("123"), new Buffer("456"), "789"]))) //
+		.toEqual("123456789")
+})
+
+test("empty string", async () => {
+	expect(await readstream(readable({ encoding: "utf8" }, []))) //
+		.toEqual("")
 })
 
 test("objects", async () => {
-	const s = new Readable({ objectMode: true })
-	const d = readstream(s)
-	s.push(new Buffer("123"))
-	s.push("456")
-	s.push(["789"])
-	s.push(null)
-	expect(await d).toEqual([new Buffer("123"), "456", ["789"]])
+	expect(await readstream(readable({ objectMode: true }, [new Buffer("123"), ["456"], "789"]))) //
+		.toEqual([new Buffer("123"), ["456"], "789"])
+})
+
+test("empty objects", async () => {
+	expect(await readstream(readable({ objectMode: true }, []))) //
+		.toEqual([])
 })

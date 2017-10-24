@@ -10,11 +10,9 @@ const readstream = stream =>
 			})
 			.on("end", () => {
 				resolve(
-					buffer.every(data => typeof data === "string")
-						? buffer.join("")
-						: buffer.every(data => typeof data === "string" || data instanceof Buffer)
-							? Buffer.concat(buffer.map(data => (data instanceof Buffer ? data : new Buffer(data))))
-							: buffer,
+					stream._readableState.objectMode
+						? buffer
+						: stream._readableState.encoding ? buffer.join("") : Buffer.concat(buffer),
 				)
 			})
 			.resume()
