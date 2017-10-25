@@ -1,21 +1,22 @@
 // @flow
 
-const readstream = stream =>
-	new Promise((resolve, reject) => {
-		const buffer = []
-		stream
+import type { Readable } from "stream"
+
+export default function readstream<T>(stream: Readable): Promise<Buffer | string | T[]> {
+	return new Promise((resolve, reject) => {
+		const buffer: any[] = []
+		void stream
 			.on("error", reject)
 			.on("data", data => {
 				buffer.push(data)
 			})
 			.on("end", () => {
 				resolve(
-					stream._readableState.objectMode
+					(stream: any)._readableState.objectMode
 						? buffer
-						: stream._readableState.encoding ? buffer.join("") : Buffer.concat(buffer),
+						: (stream: any)._readableState.encoding != null ? buffer.join("") : Buffer.concat(buffer),
 				)
 			})
 			.resume()
 	})
-
-export default readstream
+}
